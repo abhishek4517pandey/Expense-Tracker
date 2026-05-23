@@ -425,11 +425,6 @@
   background: #fef2f2;
 }
 
-  .flame-icon {
-    font-size: 36px;
-  }
-}
-
 @media (max-width: 480px) {
   .streak-container {
     padding: 15px;

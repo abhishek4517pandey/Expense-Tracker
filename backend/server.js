@@ -10,14 +10,20 @@ import budgetRoutes from "./routes/budgetRoutes.js";
 import splitRoutes from "./routes/splitRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
-
+import path from "path";
+import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
@@ -36,9 +42,6 @@ app.use(
 app.use(express.json());
 
 connectDB();
-app.get("/", (req, res) => {
-  res.json({ message: "SmartSpend API running", status: "ok" });
-});
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "healthy", time: new Date().toISOString() });
@@ -50,6 +53,11 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/split-expenses", splitRoutes);
 app.use("/api/emails", emailRoutes);
+
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
