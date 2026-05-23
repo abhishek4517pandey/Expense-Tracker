@@ -54,9 +54,9 @@ app.use("/api/budget", budgetRoutes);
 app.use("/api/split-expenses", splitRoutes);
 app.use("/api/emails", emailRoutes);
 
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
 });
 
 app.use((err, req, res, next) => {
