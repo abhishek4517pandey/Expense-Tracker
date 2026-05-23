@@ -7,7 +7,7 @@
     "dev": "nodemon backend/server.js",
     "start": "node backend/server.js",
     "serve": "npm run build --prefix Frontend && npm start",
-    "build": "npm run build --prefix Frontend",
+    "build": "cd Frontend && npx vite build",
     "postinstall": "npm install --prefix Frontend"
   },
   "dependencies": {
