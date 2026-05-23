@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "nodemon backend/server.js",
     "start": "node backend/server.js",
-    "serve": "npm run build --prefix frontend && npm start",
-    "build": "npm run build --prefix frontend",
-    "postinstall": "npm install --prefix frontend"
+    "serve": "npm run build --prefix Frontend && npm start",
+    "build": "npm run build --prefix Frontend",
+    "postinstall": "npm install --prefix Frontend"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
