@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import mongoose from "mongoose";
 import connectDB from "./config/db.js";
 import { initializeCronJobs } from "./services/cronJobs.js";
 
@@ -28,10 +29,27 @@ app.use(
 
 app.use(express.json());
 
+if (!process.env.MONGO_URI) {
+  console.warn("Warning: MONGO_URI is not configured. Database connection may fail.");
+}
+if (!process.env.JWT_SECRET) {
+  console.warn("Warning: JWT_SECRET is not configured. Authentication will not work.");
+}
+
 connectDB();
 
+import mongoose from "mongoose";
+
 app.get("/api/health", (req, res) => {
-  res.json({ status: "healthy", time: new Date().toISOString() });
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = dbState === 1 ? "connected" : dbState === 2 ? "connecting" : dbState === 3 ? "disconnecting" : "disconnected";
+  res.json({
+    status: "healthy",
+    time: new Date().toISOString(),
+    dbStatus,
+    jwtSecretConfigured: Boolean(process.env.JWT_SECRET),
+    mongoUriConfigured: Boolean(process.env.MONGO_URI)
+  });
 });
 
 app.use("/api/auth", authRoutes);

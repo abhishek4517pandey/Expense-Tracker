@@ -7,6 +7,10 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 const createToken = (userId) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+  }
+
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d"
   });
@@ -32,7 +36,10 @@ router.post("/register", async (req, res) => {
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, profilePicture: user.profilePicture } });
   } catch (err) {
     console.error("Register error:", err);
-    res.status(500).json({ message: "Error registering user" });
+    res.status(500).json({
+      message: "Error registering user",
+      error: process.env.NODE_ENV === "production" ? undefined : err.message
+    });
   }
 });
 
@@ -57,7 +64,10 @@ router.post("/login", async (req, res) => {
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, profilePicture: user.profilePicture } });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ message: "Error signing in" });
+    res.status(500).json({
+      message: "Error signing in",
+      error: process.env.NODE_ENV === "production" ? undefined : err.message
+    });
   }
 });
 
@@ -103,7 +113,10 @@ router.post("/google", async (req, res) => {
     });
   } catch (err) {
     console.error("Google auth error:", err);
-    res.status(500).json({ message: "Error with Google authentication" });
+    res.status(500).json({
+      message: "Error with Google authentication",
+      error: process.env.NODE_ENV === "production" ? undefined : err.message
+    });
   }
 });
 router.get("/me", authMiddleware, async (req, res) => {

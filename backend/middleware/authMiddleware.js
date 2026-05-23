@@ -11,6 +11,11 @@ export const authMiddleware = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   console.log("Auth middleware: Token received:", token ? "present" : "missing");
 
+  if (!process.env.JWT_SECRET) {
+    console.error("Auth middleware error: JWT_SECRET is not configured");
+    return res.status(500).json({ message: "Server error: JWT secret is not configured" });
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Auth middleware: Decoded token:", decoded);
@@ -25,6 +30,9 @@ export const authMiddleware = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Auth middleware error:", err);
-    return res.status(401).json({ message: "Unauthorized: invalid token" });
+    return res.status(401).json({
+      message: "Unauthorized: invalid token",
+      error: process.env.NODE_ENV === "production" ? undefined : err.message
+    });
   }
 };
