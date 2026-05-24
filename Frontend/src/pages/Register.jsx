@@ -1,13 +1,12 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext.jsx";
-import { jwtDecode } from "jwt-decode";
 
 const Register = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -30,29 +29,6 @@ const Register = () => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const decoded = jwtDecode(credentialResponse.credential);
-      const { name, email, picture } = decoded;
-
-      const res = await api.post("/auth/google", {
-        name,
-        email,
-        profilePicture: picture,
-        googleId: decoded.sub
-      });
-
-      login(res.data.user, res.data.token);
-      navigate("/profile");
-    } catch (err) {
-      console.error("Google registration error:", err);
-      setError(err.response?.data?.message || "Google registration failed");
-    }
-  };
-
-  const handleGoogleError = () => {
-    setError("Google registration failed. Please try again.");
-  };
   return (
     <div className="page auth-page">
       <div className="auth-grid">
@@ -72,19 +48,6 @@ const Register = () => {
         <div className="auth-card">
           <h1>Create account</h1>
           <p className="subtitle">Register and save your profile, budget, and expenses.</p>
-          
-          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-              />
-            </div>
-          </GoogleOAuthProvider>
-
-          <div style={{ textAlign: "center", margin: "1rem 0", color: "#666" }}>
-            Or continue with email
-          </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <label>Name</label>
@@ -106,14 +69,24 @@ const Register = () => {
               required
             />
             <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Choose a secure password"
-              required
-            />
+            <div className="password-input-group">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Choose a secure password"
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
 
             {error && <div className="error-text">{error}</div>}
 
