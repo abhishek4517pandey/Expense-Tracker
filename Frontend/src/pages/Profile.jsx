@@ -146,15 +146,59 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <div className="page">
-        <h1>Profile</h1>
-        <p className="subtitle">
-          You need to be signed in to edit profile details.
-        </p>
-        <p>
-          <Link to="/login">Login</Link> or <Link to="/register">register</Link>{" "}
-          to continue.
-        </p>
+      <div className="profile-locked-page">
+        <div className="profile-locked-card">
+          <div className="locked-icon-wrapper">
+            <span className="locked-icon">🔒</span>
+            <div className="locked-icon-ring"></div>
+          </div>
+          <h1 className="locked-title">Sign In to Access Your Profile</h1>
+          <p className="locked-subtitle">
+            Unlock powerful features to manage your finances like a pro. Your personalized dashboard awaits.
+          </p>
+          <div className="locked-features">
+            <div className="locked-feature">
+              <span className="locked-feature-icon">🎨</span>
+              <div>
+                <h4>Custom Avatar</h4>
+                <p>Choose from pre-built avatars or upload your own photo</p>
+              </div>
+            </div>
+            <div className="locked-feature">
+              <span className="locked-feature-icon">💰</span>
+              <div>
+                <h4>Budget Management</h4>
+                <p>Set monthly budgets and track spending in real-time</p>
+              </div>
+            </div>
+            <div className="locked-feature">
+              <span className="locked-feature-icon">🔔</span>
+              <div>
+                <h4>Smart Notifications</h4>
+                <p>Get alerts when you're approaching budget limits</p>
+              </div>
+            </div>
+            <div className="locked-feature">
+              <span className="locked-feature-icon">🔥</span>
+              <div>
+                <h4>Track Your Streak</h4>
+                <p>Build daily logging habits with streak tracking</p>
+              </div>
+            </div>
+          </div>
+          <div className="locked-actions">
+            <Link to="/login" className="locked-login-btn">
+              <span>Sign In</span>
+              <span className="btn-arrow-icon">→</span>
+            </Link>
+            <Link to="/register" className="locked-register-btn">
+              Create Account
+            </Link>
+          </div>
+          <p className="locked-footer-text">
+            Join <strong>1,200+</strong> users managing their finances smartly
+          </p>
+        </div>
       </div>
     );
   }

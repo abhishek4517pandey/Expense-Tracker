@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { Float, MeshDistortMaterial } from "@react-three/drei";
 import AddExpenseModal from "./AddExpenseModal.jsx";
@@ -37,9 +37,26 @@ const PREBUILT_AVATARS = [
 
 const Navbar = ({ theme, toggleTheme }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useContext(AuthContext);
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (user) {
@@ -73,7 +90,12 @@ const Navbar = ({ theme, toggleTheme }) => {
 
   const handleLogout = () => {
     logout();
+    setMenuOpen(false);
     navigate("/login");
+  };
+
+  const handleNavClick = () => {
+    setMenuOpen(false);
   };
 
   return (
@@ -98,11 +120,14 @@ const Navbar = ({ theme, toggleTheme }) => {
           </Canvas>
         </div>
         
+        {/* Top Bar — Always visible */}
         <div className="navbar-left">
           <NavLogo3D />
           <span className="logo-text">SmartSpend</span>
         </div>
-        <nav className="navbar-middle">
+
+        {/* Desktop Navigation */}
+        <nav className="navbar-middle desktop-nav">
           <NavLink to="/" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Home
           </NavLink>
@@ -122,7 +147,9 @@ const Navbar = ({ theme, toggleTheme }) => {
             Profile
           </NavLink>
         </nav>
-        <div className="navbar-right">
+
+        {/* Desktop Right Section */}
+        <div className="navbar-right desktop-nav">
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
@@ -153,7 +180,85 @@ const Navbar = ({ theme, toggleTheme }) => {
             + Add Expense
           </button>
         </div>
+
+        {/* Mobile Controls — Theme + Hamburger */}
+        <div className="mobile-controls">
+          <button className="theme-toggle" onClick={toggleTheme}>
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
+          <button 
+            className={`hamburger-btn ${menuOpen ? 'open' : ''}`} 
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+        </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}></div>
+
+      {/* Mobile Slide-Down Menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        {/* User info at top if logged in */}
+        {user && (
+          <div className="mobile-user-section">
+            <img src={getAvatarUrl()} alt="Avatar" className="mobile-avatar" />
+            <div className="mobile-user-details">
+              <span className="mobile-user-name">{user.name}</span>
+              <span className="mobile-user-email">{user.email}</span>
+            </div>
+          </div>
+        )}
+
+        <nav className="mobile-nav-links">
+          <NavLink to="/" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">🏠</span> Home
+          </NavLink>
+          <NavLink to="/dashboard" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">📊</span> Dashboard
+          </NavLink>
+          <NavLink to="/expenses" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">💰</span> Expenses
+          </NavLink>
+          <NavLink to="/budget" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">📋</span> Budget
+          </NavLink>
+          <NavLink to="/split" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">👥</span> Split View
+          </NavLink>
+          <NavLink to="/profile" className={({ isActive }) => isActive ? "mobile-nav-link active" : "mobile-nav-link"} onClick={handleNavClick}>
+            <span className="mobile-nav-icon">👤</span> Profile
+          </NavLink>
+        </nav>
+
+        <div className="mobile-menu-actions">
+          <button
+            className="mobile-add-expense-btn"
+            onClick={() => { setShowAddModal(true); setMenuOpen(false); }}
+          >
+            + Add Expense
+          </button>
+
+          {user ? (
+            <button className="mobile-logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <div className="mobile-auth-buttons">
+              <NavLink to="/login" className="mobile-login-btn" onClick={handleNavClick}>
+                Login
+              </NavLink>
+              <NavLink to="/register" className="mobile-register-btn" onClick={handleNavClick}>
+                Register
+              </NavLink>
+            </div>
+          )}
+        </div>
+      </div>
 
       {showAddModal && <AddExpenseModal onClose={() => setShowAddModal(false)} />}
     </>
