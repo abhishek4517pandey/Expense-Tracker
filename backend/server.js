@@ -38,8 +38,6 @@ if (!process.env.JWT_SECRET) {
 
 connectDB();
 
-import mongoose from "mongoose";
-
 app.get("/api/health", (req, res) => {
   const dbState = mongoose.connection.readyState;
   const dbStatus = dbState === 1 ? "connected" : dbState === 2 ? "connecting" : dbState === 3 ? "disconnecting" : "disconnected";
