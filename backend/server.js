@@ -39,15 +39,24 @@ if (!process.env.JWT_SECRET) {
 connectDB();
 
 app.get("/api/health", (req, res) => {
-  const dbState = mongoose.connection.readyState;
-  const dbStatus = dbState === 1 ? "connected" : dbState === 2 ? "connecting" : dbState === 3 ? "disconnecting" : "disconnected";
-  res.json({
-    status: "healthy",
-    time: new Date().toISOString(),
-    dbStatus,
-    jwtSecretConfigured: Boolean(process.env.JWT_SECRET),
-    mongoUriConfigured: Boolean(process.env.MONGO_URI)
-  });
+  try {
+    const dbState = mongoose.connection && typeof mongoose.connection.readyState !== "undefined" ? mongoose.connection.readyState : 0;
+    const dbStatus = dbState === 1 ? "connected" : dbState === 2 ? "connecting" : dbState === 3 ? "disconnecting" : dbState === 4 ? "unauthorized" : "disconnected";
+    res.json({
+      status: "healthy",
+      time: new Date().toISOString(),
+      dbStatus,
+      jwtSecretConfigured: Boolean(process.env.JWT_SECRET),
+      mongoUriConfigured: Boolean(process.env.MONGO_URI)
+    });
+  } catch (err) {
+    console.error('/api/health error:', err);
+    res.status(500).json({
+      success: false,
+      message: process.env.NODE_ENV === "production" ? "Internal Server Error" : err.message,
+      error: process.env.NODE_ENV === "production" ? undefined : err.stack
+    });
+  }
 });
 
 app.use("/api/auth", authRoutes);
