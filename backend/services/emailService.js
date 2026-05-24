@@ -161,7 +161,7 @@ export const sendReportEmail = async (email, userName, expenses, period = "Curre
 
           <div class="footer">
             <p>SmartSpend - Track, Manage, and Optimize Your Finances</p>
-            <p><a href="http://localhost:5173" style="color: #0ea5e9; text-decoration: none;">Open Dashboard</a></p>
+            <p><a href="https://expense-tracker-3-kg5g.onrender.com/" style="color: #0ea5e9; text-decoration: none;">Open Dashboard</a></p>
           </div>
         </div>
       </body>
@@ -247,8 +247,8 @@ export const sendBudgetAlertEmail = async (email, userName, percentageUsed, spen
           `}
 
           <p style="text-align: center; margin-top: 20px;">
-            <a href="http://localhost:5173/expenses" class="cta-button">View Expenses</a>
-            <a href="http://localhost:5173/budget" class="cta-button" style="background: #6b7280; margin-left: 10px;">Adjust Budget</a>
+            <a href="https://expense-tracker-3-kg5g.onrender.com/expenses" class="cta-button">View Expenses</a>
+            <a href="https://expense-tracker-3-kg5g.onrender.com/budget" class="cta-button" style="background: #6b7280; margin-left: 10px;">Adjust Budget</a>
           </p>
 
           <div class="footer">
@@ -378,7 +378,7 @@ export const sendMonthlyReportEmail = async (email, userName, expenses, month, y
           </div>
 
           <p style="text-align: center; margin-top: 20px;">
-            <a href="http://localhost:5173/expenses" style="background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">View Detailed Report</a>
+            <a href="https://expense-tracker-3-kg5g.onrender.com/expenses" style="background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">View Detailed Report</a>
           </p>
 
           <div class="footer">
